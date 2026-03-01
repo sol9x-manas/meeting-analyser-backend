@@ -1,21 +1,20 @@
 import express from "express";
 import cors from "cors";
-import { appConfig } from "./config/app.config";
-import authRoutes from "./modules/auth/presentation/routes/auth.routes";
-import { errorHandler } from "./shared/middleware/error-handler.middleware";
-import { setupSwagger } from "./config/docs/swagger";
+import helmet from "helmet";
+import morgan from "morgan";
 
-export function createApp() {
-  const app = express();
+import { errorMiddleware } from "./middleware/error.middleware";
+import { setupSwagger } from "./config/swagger";
 
-  // Middlewares
-  app.use(cors(appConfig.cors));
-  app.use(express.json({ limit: appConfig.bodyParser.jsonLimit }));
+const app = express();
 
-  // Routes
-  app.use(appConfig.api.prefix + "/auth", authRoutes);
+app.use(cors());
+app.use(helmet());
+app.use(morgan("dev"));
+app.use(express.json());
 
-  app.use(errorHandler);
-  setupSwagger(app);
-  return app;
-}
+app.use(errorMiddleware);
+
+setupSwagger(app);
+
+export default app;

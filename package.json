@@ -1,29 +1,38 @@
 {
-  "name": "sol9x-meeting-analyser-backend",
+  "name": "meeting-analyser-backend",
   "version": "1.0.0",
-  "description": "this is SOL9X project",
-  "license": "ISC",
-  "author": "SOL9X",
-  "type": "commonjs",
-  "main": "src/main.ts",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register src/main.ts",
-    "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/main.ts",
-    "typeorm": "node --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sol9x-manas/meeting-analyser-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sol9x-manas/meeting-analyser-backend/issues"
+  },
+  "homepage": "https://github.com/sol9x-manas/meeting-analyser-backend#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
     "mysql2": "^3.18.2",
-    "nodemon": "^3.1.14",
     "reflect-metadata": "^0.2.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "tsconfig-paths": "^4.2.0",
-    "tsyringe": "^4.10.0",
     "typeorm": "^0.3.28",
     "zod": "^4.3.6"
   },
@@ -32,10 +41,10 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.3.0",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.3.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
-    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   }
