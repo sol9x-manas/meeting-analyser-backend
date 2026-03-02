@@ -7,8 +7,17 @@ export const setupSwagger = (app: Express) => {
     definition: {
       openapi: "3.0.0",
       info: {
-        title: "My API",
+        title: "Meeting Analyser API",
         version: "1.0.0",
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        },
       },
     },
     apis: ["src/modules/**/*.ts"],
@@ -16,5 +25,15 @@ export const setupSwagger = (app: Express) => {
 
   const specs = swaggerJsdoc(options);
 
-  app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
+  // Custom UI Options for Swagger
+  const uiOptions = {
+    swaggerOptions: {
+      tryItOutEnabled: true, // Baar-baar "Try it out" click karne se bachane ke liye
+    },
+    customCss: '.swagger-ui .topbar { display: none }', // Top header (Swagger logo/branding) hatane ke liye
+    customSiteTitle: "Meeting Analyser API Docs" // Browser ke tab me "Swagger UI" ki jagah custom naam dikhane ke liye
+  };
+
+  // Setup function me uiOptions pass kar diya
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs, uiOptions));
 };

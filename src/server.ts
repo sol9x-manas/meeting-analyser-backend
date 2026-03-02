@@ -1,5 +1,5 @@
 import app from "./app";
-import { AppDataSource } from "./config/database";
+import { AppDataSource } from "./config/data-source";
 import { env } from "./config/env";
 
 AppDataSource.initialize()
@@ -8,6 +8,7 @@ AppDataSource.initialize()
 
     app.listen(env.port, () => {
       console.log(`Server running on port ${env.port}`);
+      console.log(`API documentation available at http://localhost:${env.port}/docs`);
     });
   })
   .catch((err) => {

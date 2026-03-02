@@ -12,4 +12,6 @@ export const env = {
     database: process.env.DB_NAME,
   },
   jwtSecret: process.env.JWT_SECRET as string,
+  accessTokenExpiry: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN as string,
+  refreshTokenExpiry: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN as string,
 };
