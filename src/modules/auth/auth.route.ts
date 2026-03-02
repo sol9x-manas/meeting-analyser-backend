@@ -86,6 +86,67 @@ router.post("/login", validate(loginSchema), controller.login);
 
 /**
  * @swagger
+ * /api/auth/google:
+ *   post:
+ *     summary: Login or Register user using Google OAuth
+ *     description: Verifies Google ID token and logs in or creates a new user account.
+ *     tags: [Auth]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - idToken
+ *             properties:
+ *               idToken:
+ *                 type: string
+ *                 description: Google ID token received from frontend
+ *                 example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjE2...
+ *     responses:
+ *       200:
+ *         description: Google login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: number
+ *                       example: 1
+ *                     fullName:
+ *                       type: string
+ *                       example: Manas Singh
+ *                     email:
+ *                       type: string
+ *                       example: manas@email.com
+ *                     role:
+ *                       type: string
+ *                       example: customer
+ *                     provider:
+ *                       type: string
+ *                       example: google
+ *                     profileImageUrl:
+ *                       type: string
+ *                       example: https://lh3.googleusercontent.com/a/...
+ *                 accessToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 refreshToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       400:
+ *         description: Invalid Google token
+ */
+router.post("/google", controller.googleLogin);
+
+/**
+ * @swagger
  * /api/auth/refresh:
  *   post:
  *     summary: Refresh access token with rotation

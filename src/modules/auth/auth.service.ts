@@ -1,12 +1,14 @@
 import { AppDataSource } from "../../config/data-source";
-import { User } from "../user/user.model";
+import { AuthProvider, User, UserRole } from "../user/user.model";
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { env } from "../../config/env";
 import jwt from "jsonwebtoken";
 import { sendMail } from "../../utils/mailer";
+import { OAuth2Client } from "google-auth-library";
 
 const userRepo = AppDataSource.getRepository(User);
+const client = new OAuth2Client(env.google.clientId);
 
 export class AuthService {
   async register(data: any) {
@@ -41,6 +43,70 @@ export class AuthService {
     await userRepo.save(user);
 
     return { user, accessToken, refreshToken };
+  }
+
+  async googleLogin(idToken: string) {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: env.google.clientId,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload) throw new Error("Invalid Google token");
+
+    const { email, name, picture, sub } = payload;
+
+    if (!email || !sub) {
+      throw new Error("Google account missing required data");
+    }
+
+    let user = await userRepo.findOne({
+      where: [
+        { email },
+        { providerId: sub },
+      ],
+    });
+
+    // 🟢 CASE 1 — User not exists
+    if (!user) {
+      user = userRepo.create({
+        email,
+        fullName: name || "",
+        username: email.split("@")[0] + Date.now(),
+        companyName: "",
+        phoneNumber: "",
+        password: "", // Google users no password
+        role: UserRole.CUSTOMER,
+        provider: AuthProvider.GOOGLE,
+        providerId: sub,
+        profileImage: picture,
+      });
+
+      await userRepo.save(user);
+    }
+
+    // 🟡 CASE 2 — Email exists but created via LOCAL login
+    if (user.provider === AuthProvider.LOCAL) {
+      throw new Error(
+        "This email is already registered using email/password. Please login normally."
+      );
+    }
+
+    // 🔐 Generate JWT
+    const jwtPayload = { id: user.id, role: user.role };
+
+    const accessToken = generateAccessToken(jwtPayload);
+    const refreshToken = generateRefreshToken(jwtPayload);
+
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    user.currentHashedRefreshToken = hashedRefreshToken;
+    await userRepo.save(user);
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
   }
 
   async forgotPassword(email: string) {

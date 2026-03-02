@@ -13,6 +13,12 @@ export class AuthController {
     res.json(data);
   }
 
+  async googleLogin(req: any, res: any) {
+    const { idToken } = req.body;
+    const data = await service.googleLogin(idToken);
+    res.json(data);
+  }
+
   async refreshToken(req: any, res: any) {
     const data = await service.refreshToken(req.body.refreshToken);
     res.json(data);

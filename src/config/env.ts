@@ -21,4 +21,8 @@ export const env = {
     pass: process.env.MAIL_PASS,
     from: process.env.MAIL_FROM,
   },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  }
 };

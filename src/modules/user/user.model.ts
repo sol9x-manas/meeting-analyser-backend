@@ -11,6 +11,11 @@ export enum UserRole {
   CUSTOMER = "customer",
 }
 
+export enum AuthProvider {
+  LOCAL = "local",
+  GOOGLE = "google",
+}
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -43,6 +48,16 @@ export class User {
     default: UserRole.CUSTOMER,
   })
   role!: UserRole;
+  
+  @Column({
+    type: "enum",
+    enum: AuthProvider,
+    default: AuthProvider.LOCAL,
+  })
+  provider!: AuthProvider;
+
+  @Column({ nullable: true, unique: true })
+  providerId!: string;
 
   @Column({ nullable: true })
   resetOtp!: string;
