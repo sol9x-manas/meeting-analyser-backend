@@ -14,4 +14,11 @@ export const env = {
   jwtSecret: process.env.JWT_SECRET as string,
   accessTokenExpiry: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN as string,
   refreshTokenExpiry: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN as string,
+  mail: {
+    host: process.env.MAIL_HOST,
+    port: Number(process.env.MAIL_PORT),
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+    from: process.env.MAIL_FROM,
+  },
 };

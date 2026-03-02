@@ -23,6 +23,9 @@ export class User {
   username!: string;
 
   @Column({ nullable: true })
+  profileImage!: string;
+
+  @Column({ nullable: true })
   companyName!: string;
 
   @Column()

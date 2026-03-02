@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { env } from "../../config/env";
 import jwt from "jsonwebtoken";
+import { sendMail } from "../../utils/mailer";
 
 const userRepo = AppDataSource.getRepository(User);
 
@@ -53,10 +54,67 @@ export class AuthService {
 
     await userRepo.save(user);
 
-    // Yaha email send karna hoga (nodemailer)
-    console.log("OTP:", otp);
+    const html = `
+  <div style="background-color:#f4f6f8;padding:40px 0;font-family:Arial,sans-serif;">
+    <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.08);">
 
-    return { message: "OTP sent to email" };
+      <!-- Header -->
+      <div style="background:#111827;padding:20px;text-align:center;">
+        <h2 style="color:#ffffff;margin:0;">Meeting Analyser</h2>
+      </div>
+
+      <!-- Body -->
+      <div style="padding:30px;">
+        <h3 style="margin-top:0;color:#111827;">Password Reset Request</h3>
+        <p style="color:#4b5563;font-size:14px;">
+          Hi ${user.fullName || "User"},
+        </p>
+
+        <p style="color:#4b5563;font-size:14px;">
+          We received a request to reset your password. Use the OTP below to proceed:
+        </p>
+
+        <!-- OTP Box -->
+        <div style="margin:30px 0;text-align:center;">
+          <div style="
+            display:inline-block;
+            background:#f3f4f6;
+            padding:15px 30px;
+            border-radius:8px;
+            font-size:28px;
+            letter-spacing:6px;
+            font-weight:bold;
+            color:#111827;
+          ">
+            ${otp}
+          </div>
+        </div>
+
+        <p style="color:#ef4444;font-size:13px;">
+          This OTP will expire in 10 minutes.
+        </p>
+
+        <p style="color:#6b7280;font-size:13px;">
+          If you did not request this password reset, please ignore this email.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background:#f9fafb;padding:15px;text-align:center;font-size:12px;color:#9ca3af;">
+        © ${new Date().getFullYear()} Meeting Analyser. All rights reserved.
+      </div>
+
+    </div>
+  </div>
+  `;
+
+    await sendMail(
+      user.email,
+      "🔐 Password Reset OTP - Meeting Analyser",
+      html
+    );
+
+    return { message: "OTP sent to email successfully" };
   }
 
   async verifyOtp(email: string, otp: string, newPassword: string) {
